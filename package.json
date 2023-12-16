@@ -3,13 +3,17 @@
   "version": "1.0.0",
   "description": "A complete backend project , following professional approaches.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon src/index.js"
   },
   "keywords": [
     "javascript",
     "backend"
   ],
   "author": "Saransh Shivhare",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
 }
