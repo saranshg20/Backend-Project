@@ -1,2 +1,3 @@
-A complete backend project, following professional approaches.
-Data model: [Link](https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqa0k5eERuQUhfY1p6clFENFJLMy1Va0pqaU93Z3xBQ3Jtc0tsdDhLNTJodEtQY3VuRjBKeUNvQXJxVlc2RVJZWllJN1VKRnVfSTczYkNla2k0cFo5SzZpY01DUU5sM29xdkhrekIyWU1wdEN3NDk4VVRHbC05MlhBa1hEeHdqQm4tMVRhQmxwYWxoeHJhdS1xN1YzSQ&q=https%3A%2F%2Fapp.eraser.io%2Fworkspace%2FYtPqZ1VogxGy1jzIDkzj%3Forigin%3Dshare&v=9B4CvtzXRpc)
+#### A complete backend project, following professional approaches.
+
+Data model: [Link](https://app.eraser.io/workspace/YtPqZ1VogxGy1jzIDkzj)
