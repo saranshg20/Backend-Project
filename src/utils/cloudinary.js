@@ -3,7 +3,7 @@
 // on successful upload remove the file from the server
 
 import {v2 as cloudinary} from "cloudinary"
-import fs from fs
+import fs from "fs"
 
 // unlink in fs ==> for removing file
 // no delete term is used 
