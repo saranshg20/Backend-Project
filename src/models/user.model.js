@@ -67,7 +67,7 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 // Access token are short lived
 // Refresh token are long lived
 userSchema.methods.generateAccessToken = function(){
-    jwt.sign(
+    return jwt.sign(
         {
             _id: this._id,
             email: this.email,
@@ -83,7 +83,7 @@ userSchema.methods.generateAccessToken = function(){
 // Just use id in refresh token 
 // because it refreshes continuously    
 userSchema.methods.generateRefreshToken = function(){
-    jwt.sign(
+    return jwt.sign(
         {
             _id: this._id,
         }, 

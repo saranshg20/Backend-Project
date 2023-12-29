@@ -49,7 +49,6 @@ const registerUser = asyncHandler( async(req,res) => {
     // else give 500 error
 
     const {fullName, email, username, password} = req.body
-    console.log(email)
 
     /**
      * Validation
@@ -137,8 +136,7 @@ const loginUser = asyncHandler(async(req,res) => {
     // send cookies
 
     const {email, username, password} = req.body
-    if(!username || !email){
-        console.log(username, email, password)
+    if(!username && !email){
         throw new ApiError(400, "Username or Email is required")
     }
 
@@ -194,7 +192,9 @@ const logoutUser = asyncHandler(async(req, res) => {
     // clear cookies
     // reset accessToken
 
-    await User.findByIdAndUpdate(
+    console.log("LogoutRequest",req);
+
+    const temp = await User.findByIdAndUpdate(
         req.user._id, 
         {
             $set: {
@@ -205,6 +205,11 @@ const logoutUser = asyncHandler(async(req, res) => {
             new: true
         }
     )
+
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
 
     return res
     .status(200)
