@@ -64,6 +64,8 @@ userSchema.methods.isPasswordCorrect = async function (password) {
     return await bcrypt.compare(password, this.password)
 }
 
+// Access token are short lived
+// Refresh token are long lived
 userSchema.methods.generateAccessToken = function(){
     jwt.sign(
         {
