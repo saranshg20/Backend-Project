@@ -35,4 +35,24 @@ const uploadOnCloudinary = async (localFilePath) => {
     }
 }
 
-export {uploadOnCloudinary}
+const removeFromCloudinary = async(link) => {
+    try {
+        if(!link){
+            return null
+        }
+
+        // may cause error
+        const response = await cloudinary.uploader.destroy(link, {
+            resource_type: "auto"
+        })
+
+        // file is uploaded in cloudinary
+        console.log("Old File is removed successfully ", response.url)
+        return response
+
+    } catch (error) {
+        throw new ApiError(401, "Error while removing image from cloudinary")
+    }
+}
+
+export {removeFromCloudinary, uploadOnCloudinary}
