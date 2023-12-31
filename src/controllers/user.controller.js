@@ -1,7 +1,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { removeFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { response } from "express";
 import jwt from "jsonwebtoken";
@@ -227,6 +227,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     const incomingRefreshToken =
       req.cookies.refreshToken || req.body.refreshToken;
 
+
     if (!incomingRefreshToken) {
       throw new ApiError(401, "Unauthorized Request");
     }
@@ -248,19 +249,20 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
     const {
       accessToken,
-      newRefreshToken,
+      refreshToken,
     } = await generateAccessAndRefreshTokens(user._id);
+
 
     return res
       .status(200)
       .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", newRefreshToken, options)
+      .cookie("refreshToken", refreshToken, options)
       .json(
         new ApiResponse(
           200,
           {
             accessToken,
-            refreshToken: newRefreshToken,
+            refreshToken
           },
           "Access token refreshed"
         )
@@ -297,7 +299,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 const updateAccountDetails = asyncHandler(async(req,res) => {
   const { fullName, email } = req.body
 
-  if(!fullName || !email){
+  if(!fullName && !email){
     throw new ApiError(400, "All fields are required")
   }
 
@@ -344,6 +346,8 @@ const updateUserAvatar = asyncHandler(async(req,res) => {
     {new: true}
   ).select("-password")
 
+  await removeFromCloudinary(avatarURLToBeDeleted)
+
   return res
   .status(200)
   .json(
@@ -358,11 +362,13 @@ const updateUserCoverImage = asyncHandler(async(req,res) => {
     throw new ApiError(400, "Cover image file is missing")
   }
 
-  const coverImage = await uploadOnCloudinary(avatarLocalPath)
+  const coverImage = await uploadOnCloudinary(coverImageLocalPath)
 
   if(!coverImage.url){
     throw new ApiError(400, "Error while uploading on cover image")
   }
+  
+  const coverImageURLToBeDeleted = await User.findById(req.user?.id).select("coverImage")
 
   const user = await User.findByIdAndUpdate(
     req.user?._id,
@@ -373,6 +379,10 @@ const updateUserCoverImage = asyncHandler(async(req,res) => {
     },
     {new: true}
   ).select("-password")
+
+  console.log(coverImageURLToBeDeleted)
+
+  await removeFromCloudinary(coverImageURLToBeDeleted)
 
   return res
   .status(200)

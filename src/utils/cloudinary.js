@@ -42,9 +42,7 @@ const removeFromCloudinary = async(link) => {
         }
 
         // may cause error
-        const response = await cloudinary.uploader.destroy(link, {
-            resource_type: "auto"
-        })
+        const response = await cloudinary.uploader.destroy(link)
 
         // file is uploaded in cloudinary
         console.log("Old File is removed successfully ", response.url)
