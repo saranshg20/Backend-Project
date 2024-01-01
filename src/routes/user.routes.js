@@ -14,6 +14,7 @@ import {
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { uploadVideo } from "../controllers/video.controller.js";
 const router = Router();
 
 router.route("/register").post(
@@ -49,5 +50,18 @@ router
 
 router.route("/c/:username").get(verifyJWT, getUserChannelProfile);
 router.route("/history").get(verifyJWT, getWatchHistory);
+
+// User-handling for video upload and file upload
+router.route("/upload-video").post(verifyJWT,   //applied middleware
+upload.fields([
+  {
+    name: "videoFile",
+    maxCount: 1,
+  },
+  {
+    name: "thumbnail",
+    maxCount: 1,
+  },
+]), uploadVideo);
 
 export default router;
