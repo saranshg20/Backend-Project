@@ -58,21 +58,19 @@ const uploadVideo = asyncHandler(async (req,res) => {
  * To retrieve all the videos associated with users(self) channel
  */
 const channelVideos = asyncHandler(async(req,res) => {
-    const user = req.user
-    
-    if(!user){
+    if(!req.user){
         throw new ApiError(400, "Issue while verifying user!")
     }
 
-    const id = user._id
     const videos = await Video.aggregate([
         {
             $match: {
-                owner: id
+                owner: new mongoose.Types.ObjectId(req.user._id)
             }
         }, 
         {
             $project: {
+                _id: 0,
                 videoFile: 1,
                 thumbnail: 1,
                 views: 1, 
