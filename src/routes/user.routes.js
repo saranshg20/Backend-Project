@@ -14,7 +14,7 @@ import {
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { uploadVideo } from "../controllers/video.controller.js";
+import { channelVideos, uploadVideo } from "../controllers/video.controller.js";
 const router = Router();
 
 router.route("/register").post(
@@ -63,5 +63,7 @@ upload.fields([
     maxCount: 1,
   },
 ]), uploadVideo);
+
+router.route("/channel-videos").get(verifyJWT, channelVideos);
 
 export default router;

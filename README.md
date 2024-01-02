@@ -68,8 +68,20 @@ Data model: [Link](https://app.eraser.io/workspace/YtPqZ1VogxGy1jzIDkzj)
 \
 (POST: title, description, videoFile, thumbnail(Image))
 
-### Endpoints (Pending):
-1. User must be able to retrive the history.
+12. Retrieve Video Files associated with a channel:
+\
+`http://localhost:8000/api/v1/users/channel-videos`
+\
+(GET)
+
+13. Retrieve Channel details without logging in:
+\
+`http://localhost:8000/api/v1/search/profile/saranshg20`
+\
+(GET)
+
+### Pending Tasks:
+1. User must be able to retrieve the history.
 2. Return video details according to title of video provided in request. Independent of user.
 3. Creating playlists according to video titles provided. Associated with user profile.
 4. Comments in videos uploaded. 

@@ -2,12 +2,12 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Video } from "../models/video.model.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { removeFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 
 // 1. You need to take videoFile, thumbnail as form-data request
-// 2. upload Video, thumbnail to cloudinary
+// 2. upload video, thumbnail to cloudinary
 // 3. Take duration, description as input
-// 4. Need to have count for the number of request made for video URL
+// 4. Need to have count for the number of request made for video URL to show {views}
 const uploadVideo = asyncHandler(async (req,res) => {
     const { title, description } = req.body
 
@@ -19,7 +19,7 @@ const uploadVideo = asyncHandler(async (req,res) => {
     if(!videoFilePath){
         throw new ApiError(400, "Video file not uploaded")
     }
-    
+
     const thumbnailPath = req.files?.thumbnail[0]?.path
     if(!thumbnailPath){
         throw new ApiError(400, "Thumbnail not uploaded")
@@ -34,6 +34,7 @@ const uploadVideo = asyncHandler(async (req,res) => {
     const thumbnail = await uploadOnCloudinary(thumbnailPath)
     const thumbnailURL = thumbnail?.secure_url
     if(!thumbnailURL ){
+        await removeFromCloudinary(videoFileURL)
         throw new ApiError(400, "Issue while uploading thumbnail, please reupload")
     }
 
@@ -53,6 +54,49 @@ const uploadVideo = asyncHandler(async (req,res) => {
     .json( new ApiResponse(200, videoDetails, "Testing video upload") )
 })
 
+/**
+ * To retrieve all the videos associated with users(self) channel
+ */
+const channelVideos = asyncHandler(async(req,res) => {
+    const user = req.user
+    
+    if(!user){
+        throw new ApiError(400, "Issue while verifying user!")
+    }
+
+    const id = user._id
+    const videos = await Video.aggregate([
+        {
+            $match: {
+                owner: id
+            }
+        }, 
+        {
+            $project: {
+                videoFile: 1,
+                thumbnail: 1,
+                views: 1, 
+                createdAt: 1
+            }
+        }
+    ])
+
+    if(!channelVideos?.length){
+        throw new ApiError(404, "No videos with associated with logged in user")
+    }
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200, videos[0], "User Channel videos fetched successfully")
+    )
+})
+
+/**
+ * TODO: To retrieve all the videos associated with a channel (input username)
+ */
+
 export {
-    uploadVideo
+    uploadVideo,
+    channelVideos
 }
