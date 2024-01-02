@@ -76,7 +76,7 @@ Data model: [Link](https://app.eraser.io/workspace/YtPqZ1VogxGy1jzIDkzj)
 
 13. Retrieve Channel details without logging in:
 \
-`http://localhost:8000/api/v1/search/profile/saranshg20`
+`http://localhost:8000/api/v1/search/profile/{username}`
 \
 (GET)
 
