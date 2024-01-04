@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
 import { Video } from "../models/video.model.js"
+import { Like } from "../models/like.model.js"
 import { removeFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 import { response } from "express";
 import { mongoose } from "mongoose"; 
@@ -524,23 +525,57 @@ const getWatchHistory = asyncHandler(async(req,res) => {
     )
 })
 
-// TODO: Add logic for including likes count in a video
-const getVideoUsingID = asyncHandler(async(req,res) => {
+const likeVideo = asyncHandler(async(req,res) => {
   const videoId = req.params.videoId
-  const videoDetails = await Video.findById(videoId).select("-_id")
+
+  const like = await Like.create({
+    videoId: videoId,
+    likedBy: req.user._id
+  })
 
   return res
   .status(200)
-  .json(new ApiResponse(200, videoDetails))
+  .json(200, new ApiResponse(200, like))
+})
 
+const dislikeVideo = asyncHandler(async(req,res) => {
+  const reqVideoId = req.params.videoId
+
+  const disliked = await Like.findOneAndDelete({videoId: reqVideoId}).select("-_id -createdAt -updatedAt")
+  if(!disliked){
+    throw new ApiError(400, "User has not liked the video")
+  }
+
+  return res
+  .status(200)
+  .json(new ApiResponse(200, disliked, "Disliked the video"))
+})
+
+const getVideoUsingID = asyncHandler(async(req,res) => {
+  const videoID = req.params.videoId
+  const videoDetails = await Video.findById(videoID).select("-_id")
+  const likeCount = await Like.find({videoId: videoID}).select("-_id")
+  const hasUserLikedVideo = await Like.find({likedBy: req.user._id})
+  let flag = false
+
+  if(hasUserLikedVideo!=undefined || hasUserLikedVideo.length!=0){
+    videoDetails.hasUserLikedVideo = true
+    flag = true
+  }
+
+  return res
+  .status(200)
+  .json(new ApiResponse(200, {videoDetails, likedByUser: flag}))
 })
 
 export {
   changeCurrentPassword,
+  dislikeVideo,
   getCurrentUser,
   getUserChannelProfile,
   getWatchHistory,
   getVideoUsingID,
+  likeVideo,
   loginUser,
   logoutUser,
   refreshAccessToken,
