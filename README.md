@@ -82,7 +82,7 @@ Data model: [Link](https://app.eraser.io/workspace/YtPqZ1VogxGy1jzIDkzj)
 
 ### Pending Tasks:
 1. User must be able to retrieve the history.
-2. Return video details according to title of video provided in request. Independent of user.
+2. Return video details according to videoId provided in request. Independent of user.
 3. Creating playlists according to video titles provided. Associated with user profile.
 4. Comments in videos uploaded. 
 5. Likes in videos and comments.

@@ -3,6 +3,7 @@ import {
   changeCurrentPassword,
   getCurrentUser,
   getUserChannelProfile,
+  getVideoUsingID,
   getWatchHistory,
   loginUser,
   logoutUser,
@@ -65,5 +66,7 @@ upload.fields([
 ]), uploadVideo);
 
 router.route("/channel-videos").get(verifyJWT, channelVideos);
+
+router.route("/v/:videoId").post(verifyJWT, getVideoUsingID);
 
 export default router;

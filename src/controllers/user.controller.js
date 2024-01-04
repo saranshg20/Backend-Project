@@ -2,8 +2,10 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
+import { Video } from "../models/video.model.js"
 import { removeFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 import { response } from "express";
+import { mongoose } from "mongoose"; 
 import jwt from "jsonwebtoken";
 
 const options = {
@@ -512,9 +514,6 @@ const getWatchHistory = asyncHandler(async(req,res) => {
             }
           ]
         }
-      },
-      {
-
       }
     ])
 
@@ -525,11 +524,23 @@ const getWatchHistory = asyncHandler(async(req,res) => {
     )
 })
 
+// TODO: Add logic for including likes count in a video
+const getVideoUsingID = asyncHandler(async(req,res) => {
+  const videoId = req.params.videoId
+  const videoDetails = await Video.findById(videoId).select("-_id")
+
+  return res
+  .status(200)
+  .json(new ApiResponse(200, videoDetails))
+
+})
+
 export {
   changeCurrentPassword,
   getCurrentUser,
   getUserChannelProfile,
   getWatchHistory,
+  getVideoUsingID,
   loginUser,
   logoutUser,
   refreshAccessToken,

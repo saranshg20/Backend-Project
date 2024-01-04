@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Video } from "../models/video.model.js";
 import { removeFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
+import { mongoose } from 'mongoose';
 
 // 1. You need to take videoFile, thumbnail as form-data request
 // 2. upload video, thumbnail to cloudinary
