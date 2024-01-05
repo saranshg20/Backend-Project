@@ -4,17 +4,20 @@ const commentSchema = new Schema(
     {
         content: {
             type: String,
-            required: true
+            required: true,
         }, 
         video: {
             type: Schema.Types.ObjectId,
-            ref: 'Video'
+            ref: 'Video', 
+            required: true,
+            index: true
         },
         owner: {
             type: Schema.Types.ObjectId,
-            ref: 'User'
+            ref: 'User', 
+            required: true
         }
     }, {timestamps: true}
 )
 
-export const Comment = mongoose.model(commentSchema, 'Comment')
+export const Comment = mongoose.model('Comment', commentSchema)

@@ -82,30 +82,35 @@ Data model: [Link](https://app.eraser.io/workspace/YtPqZ1VogxGy1jzIDkzj)
 
 14. Like Video
 \
-`http://localhost:8000/api/v1/users/like/{videoId}`
+`http://localhost:8000/api/v1/users/v/{videoId}/like`
 \
 (POST)
 
 15. Dislike Video
 \
-`http://localhost:8000/api/v1/users/dislike/{videoId}`
+`http://localhost:8000/api/v1/users/v/{videoId}/dislike`
 \
 (POST)
 
 16. Search video while user is logged in
 \
-`http://localhost:8000/api/v1/users/{videoId}`
+`http://localhost:8000/api/v1/users/v/{videoId}`
 \
 (POST)
+
+17. Comment on Videos
+\
+`http://localhost:8000/api/v1/users/v/{videoId}/comment`
+\
+(POST: comment)
+
 
 
 ### Pending Tasks:
 1. User must be able to retrieve the history.
-2. Return video details according to videoId provided in request. Independent of user.
-3. Creating playlists according to video titles provided. Associated with user profile.
-4. Comments in videos uploaded. 
-5. Likes in comments.
-6. Publishing and unpublishing of video from User end.
+2. Creating playlists according to video titles provided. Associated with user profile.
+3. Likes in comments.
+4. Publishing and unpublishing of video from User end.
 
 
 

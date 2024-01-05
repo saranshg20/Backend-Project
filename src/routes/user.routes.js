@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   changeCurrentPassword,
+  commentOnVideo,
   dislikeVideo,
   getCurrentUser,
   getUserChannelProfile,
@@ -70,7 +71,8 @@ upload.fields([
 router.route("/channel-videos").get(verifyJWT, channelVideos);
 
 router.route("/v/:videoId").post(verifyJWT, getVideoUsingID);
-router.route("/v/like/:videoId").post(verifyJWT, likeVideo);
-router.route("/v/dislike/:videoId").post(verifyJWT, dislikeVideo);
+router.route("/v/:videoId/like").post(verifyJWT, likeVideo);
+router.route("/v/:videoId/dislike").post(verifyJWT, dislikeVideo);
+router.route("/v/:videoId/comment").post(verifyJWT, commentOnVideo);
 
 export default router;
