@@ -14,7 +14,7 @@ import {
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { channelVideos, commentOnVideo, dislikeVideo, getVideoUsingID, likeVideo, uploadVideo } from "../controllers/video.controller.js";
+import { channelVideos, commentOnVideo, dislikeVideo, getVideoUsingID, likeCommentOnVideo, likeVideo, uploadVideo } from "../controllers/video.controller.js";
 const router = Router();
 
 router.route("/register").post(
@@ -70,5 +70,6 @@ router.route("/v/:videoId").post(verifyJWT, getVideoUsingID);
 router.route("/v/:videoId/like").post(verifyJWT, likeVideo);
 router.route("/v/:videoId/dislike").post(verifyJWT, dislikeVideo);
 router.route("/v/:videoId/comment").post(verifyJWT, commentOnVideo);
+router.route("/v/:videoId/like/comment/:commentId").post(verifyJWT, likeCommentOnVideo);
 
 export default router;

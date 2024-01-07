@@ -78,8 +78,6 @@ const registerUser = asyncHandler(async (req, res) => {
     $or: [{ username }, { email }],
   });
 
-  console.log(existedUser);
-
   if (existedUser) {
     throw new ApiError(409, "User with this email or username already exists");
   }
@@ -87,16 +85,13 @@ const registerUser = asyncHandler(async (req, res) => {
   /**
    * Handle files: avatar, coverImage
    */
-  console.log(req.files);
   const avatarLocalPath = req.files?.avatar[0]?.path;
   const coverImageLocalPath = req.files?.coverImage[0]?.path
 
-  console.log(avatarLocalPath);
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar file is requried");
   }
 
-  console.log(coverImageLocalPath)
   const avatar = await uploadOnCloudinary(avatarLocalPath);
   const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
@@ -193,8 +188,6 @@ const loginUser = asyncHandler(async (req, res) => {
 const logoutUser = asyncHandler(async (req, res) => {
   // clear cookies
   // reset accessToken
-
-  console.log("LogoutRequest", req);
 
   const temp = await User.findByIdAndUpdate(
     req.user._id,
@@ -373,8 +366,6 @@ const updateUserCoverImage = asyncHandler(async(req,res) => {
     {new: true}
   ).select("-password")
 
-  console.log(coverImageURLToBeDeleted)
-
   await removeFromCloudinary(coverImageURLToBeDeleted)
 
   return res
@@ -522,7 +513,6 @@ const getWatchHistory = asyncHandler(async(req,res) => {
       new ApiResponse(200, user[0].watchHistory, "Watch history fetched successfully")
     )
 })
-
 
 
 export {

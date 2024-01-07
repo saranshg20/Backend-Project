@@ -5,7 +5,6 @@ const likeSchema = new Schema(
         commentId: {
             type: Schema.Types.ObjectId,
             ref: 'Comment',
-            index: true
         },
         videoId: {
             type: Schema.Types.ObjectId,
