@@ -1,6 +1,8 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { Like } from "../models/like.model.js"
+import { Comment } from "../models/comment.model.js"
 import { Video } from "../models/video.model.js";
 import { removeFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 import { mongoose } from 'mongoose';
@@ -91,11 +93,88 @@ const channelVideos = asyncHandler(async(req,res) => {
     )
 })
 
+const likeVideo = asyncHandler(async(req,res) => {
+  const videoId = req.params.videoId
+
+  const like = await Like.create({
+    videoId: videoId,
+    likedBy: req.user._id
+  })
+
+  return res
+  .status(200)
+  .json(200, new ApiResponse(200, like))
+})
+
+const dislikeVideo = asyncHandler(async(req,res) => {
+  const reqVideoId = req.params.videoId
+
+  const disliked = await Like.findOneAndDelete({videoId: reqVideoId}).select("-_id -createdAt -updatedAt")
+  if(!disliked){
+    throw new ApiError(400, "User has not liked the video")
+  }
+
+  return res
+  .status(200)
+  .json(new ApiResponse(200, disliked, "Disliked the video"))
+})
+
+const commentOnVideo = asyncHandler(async(req, res) => {
+  const { comment } = req.body
+  if(!comment.trim()){
+    throw new ApiError(400, "Empty comment string")
+  }
+
+  const videoId = req.params?.videoId
+  if(!videoId){
+    throw new ApiError(400, "Issue with video id")
+  }
+
+  const user = req.user
+  if(!user){
+    throw new ApiError(404, "User not logged in")
+  }
+
+  const commentDetails = await Comment.create({
+    content: comment,
+    video: videoId,
+    owner: user._id
+  })
+
+  return res
+  .status(200)
+  .json(new ApiResponse(200, commentDetails, "Added comment successfully"))
+})
+
+const getVideoUsingID = asyncHandler(async(req,res) => {
+  const videoID = req.params.videoId
+  const videoDetails = await Video.findById(videoID).select("-_id")
+  const likeCount = await Like.find({videoId: videoID}).select("-_id")
+  const hasUserLikedVideo = await Like.find({likedBy: req.user._id})
+  const commentsOnVideo = await Comment.find({video: videoID})
+
+  let flag = false
+
+  if(hasUserLikedVideo!=undefined || hasUserLikedVideo.length!=0){
+    videoDetails.hasUserLikedVideo = true
+    flag = true
+  }
+
+  return res
+  .status(200)
+  .json(new ApiResponse(200, {videoDetails, likeCount: likeCount.length, likedByUser: flag, comments: commentsOnVideo}))
+})
+
+
 /**
  * TODO: To retrieve all the videos associated with a channel (input username)
  */
 
 export {
+    channelVideos, 
+    likeVideo, 
+    dislikeVideo,
+    commentOnVideo, 
+    getVideoUsingID,
     uploadVideo,
-    channelVideos
 }

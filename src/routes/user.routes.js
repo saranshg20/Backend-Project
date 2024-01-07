@@ -1,13 +1,9 @@
 import { Router } from "express";
 import {
   changeCurrentPassword,
-  commentOnVideo,
-  dislikeVideo,
   getCurrentUser,
   getUserChannelProfile,
-  getVideoUsingID,
   getWatchHistory,
-  likeVideo,
   loginUser,
   logoutUser,
   refreshAccessToken,
@@ -18,7 +14,7 @@ import {
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { channelVideos, uploadVideo } from "../controllers/video.controller.js";
+import { channelVideos, commentOnVideo, dislikeVideo, getVideoUsingID, likeVideo, uploadVideo } from "../controllers/video.controller.js";
 const router = Router();
 
 router.route("/register").post(
