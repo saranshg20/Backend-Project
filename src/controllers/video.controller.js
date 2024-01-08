@@ -109,9 +109,17 @@ const channelVideos = asyncHandler(async (req, res) => {
 
 const likeVideo = asyncHandler(async (req, res) => {
     const videoId = req.params.videoId;
-
     if (!videoId) {
         throw new ApiError(400, "Invalid Video Id");
+    }
+
+    const alreadyLikedVideo = await Like.findOne({
+        videoId: videoId,
+        likedBy: req.user._id
+    })
+
+    if (alreadyLikedVideo != null) {
+        throw new ApiError(400, "User has already liked the video")
     }
 
     const like = await Like.create({
@@ -149,10 +157,10 @@ const commentOnVideo = asyncHandler(async (req, res) => {
 
     const videoId = req.params?.videoId;
     if (!videoId) {
-        throw new ApiError(400, "Issue with video id");
+        throw new ApiError(404, "Video Id not found");
     }
 
-    const user = req.user;
+    const user = req?.user;
     if (!user) {
         throw new ApiError(404, "User not logged in");
     }
@@ -170,40 +178,121 @@ const commentOnVideo = asyncHandler(async (req, res) => {
 
 const getVideoUsingID = asyncHandler(async (req, res) => {
     const videoId = req.params.videoId;
-    const videoDetails = await Video.findById(videoId).select("-_id");
-    const likeCount = await Like.find({ videoId: videoId }).select("-_id");
-    const hasUserLikedVideo = await Like.find({ likedBy: req.user._id });
-    const commentsOnVideo = await Comment.find({ video: videoId });
+    console.log(req.user._id)
 
-    let flag = false;
+    const videoDetails = await Video.aggregate([
+        {
+            $match: {
+                _id: new mongoose.Types.ObjectId(videoId),
+            },
+        },
+        {
+            $lookup: {
+                from: "comments",
+                localField: "_id",
+                foreignField: "video",
+                as: "commentsInVideo",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "likes",
+                            localField: "_id",
+                            foreignField: "commentId",
+                            as: "commentLikes"
+                        }
+                    },
+                    {
+                        $addFields: {
+                            likeCount: { $size: "$commentLikes" }
+                        }
+                    },
+                    {
+                        $project: {
+                            _id: 1,
+                            content: 1,
+                            owner: 1,
+                            likeCount: 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $lookup: {
+                from: "likes",
+                localField: "_id",
+                foreignField: "videoId",
+                as: "likesInVideo",
+            },
+        },
+        {
+            $addFields: {
+                likeCount: { $size: "$likesInVideo" }
+            }
+        },
+        {
+            $project: {
+                videoFile: 1,
+                thumbnail: 1,
+                title: 1,
+                description: 1,
+                duration: 1,
+                likeCount: 1,
+                views: 1,
+                createdAt: 1,
+                updatedAt: 1,
+                hasUserLikedVideo: 1,
+                arrayOfCommentUserLikes: {
+                    $map: {
+                        input: "$commentsInVideo",
+                        as: "comment",
+                        in: ["$$comment.content", "$$comment.owner", "$$comment.likeCount"],
+                    },
+                },
+                likesInVideo: {
+                    $map: {
+                        input: "$likesInVideo",
+                        as: "like",
+                        in: "$$like.likedBy"
+                    }
+                }
+            },
+        },
+    ]);
 
-    if (hasUserLikedVideo != undefined || hasUserLikedVideo.length != 0) {
-        videoDetails.hasUserLikedVideo = true;
-        flag = true;
+    if(!videoDetails){
+        throw new ApiError(404, "Video not found")
     }
+
+    const hasUserLikedVideo = await Like.find({ likedBy: req.user._id, videoId: videoId });
 
     return res.status(200).json(
         new ApiResponse(200, {
             videoDetails,
-            likeCount: likeCount.length,
-            likedByUser: flag,
-            comments: commentsOnVideo,
+            'hasUserLikedVideo': hasUserLikedVideo
         })
     );
 });
 
 const likeCommentOnVideo = asyncHandler(async (req, res) => {
     const commentId = req.params?.commentId;
-    const videoId = req.params?.videoId;
-    const user = req.user;
+    const user = req?.user;
 
-    if (!commentId || !videoId || !user) {
+    if (!commentId || !user) {
         throw new ApiError(400, "More information requried to like comment");
     }
 
+    const alreadyLikedComment = await Like.findOne({
+        commentId: commentId,
+        likedBy: user._id
+    })
+
+    if (alreadyLikedComment != null) {
+        throw new ApiError(400, "User has already liked the comment")
+    }
+
     const like = await Like.create({
-        owner: user,
-        videoId: videoId,
+        likedBy: user._id,
         commentId: commentId,
     });
 

@@ -104,7 +104,11 @@ Data model: [Link](https://app.eraser.io/workspace/YtPqZ1VogxGy1jzIDkzj)
 \
 (POST: comment)
 
-
+18. Like comments
+\
+`http://localhost:8000/api/v1/users/v/{videoId}/like/comment/{commentId}`
+\
+(POST)
 
 ### Pending Tasks:
 1. User must be able to retrieve the history.
