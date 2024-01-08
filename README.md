@@ -1,6 +1,6 @@
 ### Youtube Backend Clone Project
 
-Data model: [Link](https://app.eraser.io/workspace/YtPqZ1VogxGy1jzIDkzj)
+[Data Model](https://app.eraser.io/workspace/lkif0q3Vx40o6nSNcuhB?origin=share)
 
 ### Endpoints (Created):
 1. Register the user:
