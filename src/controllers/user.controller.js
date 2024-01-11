@@ -61,10 +61,10 @@ const registerUser = asyncHandler(async (req, res) => {
   /**
    * Validation
    */
-  // if(fullName===""){
-  //     throw new ApiError(400, "Fullname is requried")
-  // }
-  // or use multiple if blocks
+  if(username.indexOf(' '!==-1)){
+    throw new ApiError(400, "Space not allowed for username")
+  }
+  
   if (
     [fullName, email, username, password].some((field) => field?.trim() === "")
   ) {
@@ -377,6 +377,7 @@ const updateUserCoverImage = asyncHandler(async(req,res) => {
 
 const getUserChannelProfile = asyncHandler(async(req,res) => {
   const {username} = req.params
+  console.log(username)
 
   if(!username?.trim()){
     throw new ApiError(400, "Username is missing")

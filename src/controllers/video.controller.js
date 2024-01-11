@@ -242,11 +242,11 @@ const getVideoUsingID = asyncHandler(async (req, res) => {
                 createdAt: 1,
                 updatedAt: 1,
                 hasUserLikedVideo: 1,
-                arrayOfCommentUserLikes: {
+                arrayOfComments: {
                     $map: {
                         input: "$commentsInVideo",
                         as: "comment",
-                        in: ["$$comment.content", "$$comment.owner", "$$comment.likeCount"],
+                        in: {comment: "$$comment.content", commentedBy: "$$comment.owner", likesInComment: "$$comment.likeCount"},
                     },
                 },
                 likesInVideo: {
