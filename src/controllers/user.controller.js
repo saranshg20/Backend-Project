@@ -2,6 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
+import { Playlist } from "../models/playlist.model.js";
 import { removeFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 import { response } from "express";
 import { mongoose } from "mongoose"; 
@@ -64,7 +65,7 @@ const registerUser = asyncHandler(async (req, res) => {
   if(username.indexOf(' '!==-1)){
     throw new ApiError(400, "Space not allowed for username")
   }
-  
+
   if (
     [fullName, email, username, password].some((field) => field?.trim() === "")
   ) {
@@ -515,9 +516,50 @@ const getWatchHistory = asyncHandler(async(req,res) => {
     )
 })
 
+const createPlaylist = asyncHandler(async(req,res) => {
+  const {playlistName, description, videoIds} = req.body
+  const user = req.user
+  
+  if(!playlistName.trim()){
+    throw new ApiError(400, "Playlist name not provided")
+  }
+  else if(!description.trim()){
+    throw new ApiError(400, "Playlist description not provided")
+  }
+  else if(videoIds.length===0){
+    throw new ApiError(400, "No video selected for playlist")
+  }
+  else if(!user){
+    throw new ApiError(400, "Un-verified user")
+  }
+
+  // verify if playlist with this name already exists
+  // in current user's channel
+  const checkPlaylistIfExists = await Playlist.findOne({owner: user._id, name: playlistName})
+
+  if(checkPlaylistIfExists){
+    throw new ApiError(400, "Playlist with this name already exists")
+  }
+
+  const newPlaylist = await Playlist.create({
+    name: playlistName,
+    description: description, 
+    owner: user._id,
+    videos: videoIds
+  })
+
+  if(!newPlaylist){
+    throw new ApiError(500, "DB server issue when creating the playlist")
+  }
+
+  return res
+  .status(201)
+  .json(new ApiResponse(201, newPlaylist, "Playlist created successfully"))
+})
 
 export {
   changeCurrentPassword,
+  createPlaylist,
   getCurrentUser,
   getUserChannelProfile,
   getWatchHistory,

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   changeCurrentPassword,
+  createPlaylist,
   getCurrentUser,
   getUserChannelProfile,
   getWatchHistory,
@@ -71,5 +72,7 @@ router.route("/v/:videoId/like").post(verifyJWT, likeVideo);
 router.route("/v/:videoId/dislike").post(verifyJWT, dislikeVideo);
 router.route("/v/:videoId/comment").post(verifyJWT, commentOnVideo);
 router.route("/v/:videoId/like/comment/:commentId").post(verifyJWT, likeCommentOnVideo);
+
+router.route("/create-playlist").post(verifyJWT, createPlaylist);
 
 export default router;

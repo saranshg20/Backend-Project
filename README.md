@@ -110,10 +110,17 @@
 \
 (POST)
 
+19. Create Playlists
+\
+`http://localhost:8000/api/v1/users/create-playlist`
+\
+(POST: playlistName, description, videoIds (list))
+
 ### Pending Tasks:
 1. User must be able to retrieve the history.
-2. Creating playlists according to video titles provided. Associated with user profile.
-3. Publishing and unpublishing of video from User end.
+2. Publishing and unpublishing of video from User end.
+3. Retrieving playlist.
+4. Adding and deleting videos from playlist.
 
 
 
