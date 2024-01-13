@@ -22,7 +22,11 @@ const playlistSchema = new Schema(
                 type: Schema.Types.ObjectId,
                 ref: 'Video'
             }
-        ]
+        ],
+        thumbnail: {
+            type: String,
+            required: true
+        },
     }, {timestamps: true}
 )
 

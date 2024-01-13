@@ -90,7 +90,15 @@ router
   .route("/v/:videoId/like/comment/:commentId")
   .post(verifyJWT, likeCommentOnVideo);
 
-router.route("/create-playlist").post(verifyJWT, createPlaylist);
+router.route("/create-playlist").post(
+  verifyJWT, 
+  upload.fields([
+    {
+      name: "thumbnail",
+      maxCount: 1,
+    },
+  ]),
+  createPlaylist);
 
 router.route("/v/:videoId/publish").put(verifyJWT, publishVideo);
 router.route("/v/:videoId/unpublish").put(verifyJWT, unpublishVideo);
