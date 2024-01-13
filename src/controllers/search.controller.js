@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
 
+//TODO: Also fetch the videos uploaded by the channel/user
 const getChannelProfileForNotLoggedInUser = asyncHandler(async (req, res) => {
     const username = req.params?.username?.trim();
 

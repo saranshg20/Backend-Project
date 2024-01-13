@@ -128,13 +128,18 @@
 \
 (PUT)
 
+22. Channel Playlists
+\
+`http://localhost:8000/api/v1/users/channel-playlists`
+\
+(GET)
+
 ### Pending Tasks:
 1. User must be able to retrieve the history.
-2. Publishing and unpublishing of video from User end.
-3. Retrieving playlist.
-4. Adding and deleting videos from playlist.
-5. Logic to update views in a video.
-6. Searching videos using title.
+2. Retrieving playlist.
+3. Adding and deleting videos from playlist.
+4. Logic to update views in a video.
+5. Searching videos using title from all published videos.
 
 
 

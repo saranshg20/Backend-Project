@@ -557,11 +557,29 @@ const createPlaylist = asyncHandler(async(req,res) => {
   .json(new ApiResponse(201, newPlaylist, "Playlist created successfully"))
 })
 
+const getChannelPlaylists = asyncHandler(async(req,res) => {
+  const user = req.user
+  if(!user){
+    throw new ApiError(400, "Un-verified user")
+  }
+
+  const playlists = await Playlist.find({owner: user._id})
+
+  if(!playlists){
+    throw new ApiError(500, "DB server issue when fetching playlists")
+  }
+
+  return res
+  .status(200)
+  .json(new ApiResponse(200, playlists, "Playlists fetched successfully"))
+})
+
 export {
   changeCurrentPassword,
   createPlaylist,
   getCurrentUser,
   getUserChannelProfile,
+  getChannelPlaylists,
   getWatchHistory,
   loginUser,
   logoutUser,
