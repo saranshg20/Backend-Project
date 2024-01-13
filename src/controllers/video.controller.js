@@ -303,6 +303,44 @@ const likeCommentOnVideo = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, like, "Liked the comment"));
 });
 
+const publishVideo = asyncHandler(async (req, res) => {
+    const videoId = req.params.videoId;
+    if (!videoId) {
+        throw new ApiError(400, "Invalid Video Id");
+    }
+
+    const video = await Video.findOneAndUpdate(
+        { _id: videoId },
+        { published: true },
+        { new: true }
+    );
+
+    if (!video) {
+        throw new ApiError(500, "Internal Database server error");
+    }
+
+    return res.status(200).json(new ApiResponse(200, video, "Published the video"));
+})
+
+const unpublishVideo = asyncHandler(async (req, res) => {
+    const videoId = req.params.videoId;
+    if (!videoId) {
+        throw new ApiError(400, "Invalid Video Id");
+    }
+
+    const video = await Video.findOneAndUpdate(
+        { _id: videoId },
+        { published: false },
+        { new: true }
+    );
+
+    if (!video) {
+        throw new ApiError(500, "Internal Database server error");
+    }
+
+    return res.status(200).json(new ApiResponse(200, video, "Unpublished the video"));
+})
+
 /**
  * TODO: To retrieve all the videos associated with a channel (input username)
  */
@@ -314,5 +352,7 @@ export {
     commentOnVideo,
     likeCommentOnVideo,
     getVideoUsingID,
+    publishVideo,
+    unpublishVideo,
     uploadVideo,
 };
