@@ -116,11 +116,25 @@
 \
 (POST: playlistName, description, videoIds (list))
 
+20. Publish Video
+\
+`http://localhost:8000/api/v1/users/v/{videoId}/publish`
+\
+(PUT)
+
+21. Unpublish Video
+\
+`http://localhost:8000/api/v1/users/v/{videoId}/unpublish`
+\
+(PUT)
+
 ### Pending Tasks:
 1. User must be able to retrieve the history.
 2. Publishing and unpublishing of video from User end.
 3. Retrieving playlist.
 4. Adding and deleting videos from playlist.
+5. Logic to update views in a video.
+6. Searching videos using title.
 
 
 
